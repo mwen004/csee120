@@ -12,10 +12,6 @@
 #include "simAVRHeader.h"
 #endif
 
-unsigned char GetBit(unsigned char x, unsigned char k)
-{
-  return((x & (0x01<<k))!=0);
-}
 int main(void) {
     /* Insert DDR and PORT initializations */
   DDRA = 0x00; PORTA = 0xFF;
@@ -24,23 +20,30 @@ int main(void) {
 
   unsigned char bitcounter = 0x00;
   unsigned char outcounter = 0x00;
+  unsigned char numOnes = 0x00;
     /* Insert your solution below */
     while (1) {
-      while (bitcounter < 8)
-	{
-	  if (GetBit(PINA,bitcounter))
-	    {
-	      outcounter++;
-	    }
-	  if (GetBit(PINB,bitcounter))
-	    {
-	      outcounter++;
-	    }
-	  bitcounter++;
+      PINA = PINA >>1;
+      PINB = PINB >>1;
+      bitcounter = (PINA & 0x01);
+      outcounter = (PINB & 0x01);
+      
+      if(bitcounter ==0x01){
+	numOnes = numOnes + 1;
+      }
+      if(outcounter ==0x01){
+	numOnes = numOnes + 1;
+      }
+      if (bitcounter==0 && outcounter==0){
+	PORTC = numOnes;
+      }
+      else{
+	PORTC = numOnes;
+      }
     }
-      PORTC = outcounter;
-      bitcounter = 0x00;
-      outcounter = 0x00;
-    }
+    PORTC = numOnes;
+    bitcounter = 0x00;
+    outcounter = 0x00;
+    numOnes = 0x00;
     return 1;
 }
